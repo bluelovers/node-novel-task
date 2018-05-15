@@ -2,61 +2,80 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const git_diff_from_1 = require("git-diff-from");
 const path = require("upath2");
-const fs = require("fs-extra");
-const config_1 = require("./lib/config");
-exports.MODULE_NAME = 'node-novel-task';
-let CWD = process.cwd();
-const result = config_1.default(exports.MODULE_NAME, {
-    searchPlaces: [
-        'package.json',
-        `.${exports.MODULE_NAME}rc`,
-        `.${exports.MODULE_NAME}rc.local.json`,
-        `.${exports.MODULE_NAME}rc.local.yaml`,
-        `.${exports.MODULE_NAME}rc.local.yml`,
-        `${exports.MODULE_NAME}.config.local.js`,
-        `.${exports.MODULE_NAME}rc.json`,
-        `.${exports.MODULE_NAME}rc.yaml`,
-        `.${exports.MODULE_NAME}rc.yml`,
-        `${exports.MODULE_NAME}.config.js`,
-    ],
-    cwd: CWD,
-});
-if (!result) {
-    throw new Error(`無法找到 config`);
-}
-console.log(`找到 config 位於 ${pathRelative(result.filepath)}`);
-console.dir(result, {
-    depth: 4,
-});
-let cache = config_1.default('cache', {
-    cwd: path.resolve(CWD, './.cache'),
-    stopDir: path.resolve(CWD, './.cache'),
-    searchPlaces: [
-        `.cache.json`,
-    ],
-});
-console.log(cache);
-if (!cache) {
-    cache = {
-        config: {
-            last: 10,
-        },
-        filepath: path.resolve(CWD, './.cache', '.cache.json'),
-    };
-}
-let ls = git_diff_from_1.default(cache.config.last, {
-    cwd: result.config.cwd,
-});
-console.log(ls);
-if (ls.length) {
-    cache.config.last = ls.to;
-    fs.writeJSONSync(cache.filepath, cache.config, {
-        spaces: 2,
-    });
-}
-else {
-}
+const Promise = require("bluebird");
 function pathRelative(file) {
-    let s = path.relative(process.cwd(), result.filepath);
+    let s = path.relative(process.cwd(), file);
     return s;
 }
+exports.pathRelative = pathRelative;
+function novelDiffFromLog(options) {
+    let ls = git_diff_from_1.default(options.baseHash, {
+        cwd: options.novelRoot,
+    });
+    let ret = {
+        novelRoot: options.novelRoot,
+        baseHash: options.baseHash,
+        list: {},
+        range: {
+            from: ls.from,
+            to: ls.to,
+        },
+        count: {
+            main: 0,
+            novel: 0,
+            file: 0,
+        },
+    };
+    if (ls.length) {
+        ret.list = ls.reduce(function (a, value) {
+            let s = value.path.split(/[\\\/]/);
+            if (s.length > 3) {
+                let pathMain = s[0];
+                let novelID = s[1];
+                let basename = s[s.length - 1];
+                let subpath = s.slice(2).join('/');
+                if (!a[pathMain]) {
+                    ret.count.main++;
+                }
+                a[pathMain] = a[pathMain] || {};
+                if (!a[pathMain][novelID]) {
+                    ret.count.novel++;
+                }
+                a[pathMain][novelID] = a[pathMain][novelID] || [];
+                Object.assign(a[pathMain][novelID], {
+                    pathMain,
+                    novelID,
+                });
+                a[pathMain][novelID].push(Object.assign(value, {
+                    pathMain,
+                    novelID,
+                    basename,
+                    subpath,
+                }));
+                ret.count.file++;
+            }
+            return a;
+        }, {});
+    }
+    return ret;
+}
+exports.novelDiffFromLog = novelDiffFromLog;
+function runTask(data, setting) {
+    return Promise.resolve(Promise.mapSeries(Object.keys(data.list), async function (main) {
+        await Promise.mapSeries(Object.keys(data.list[main]), async function (novel) {
+            if (setting.config.task.file) {
+                await Promise.map(data.list[main][novel], async function (file) {
+                    return setting.config.task.file(file, file.fullpath);
+                });
+            }
+            if (setting.config.task.novel) {
+                await setting.config.task.novel(data.list[main][novel], novel);
+            }
+        });
+        if (setting.config.task.main) {
+            await setting.config.task.main(data.list[main], main);
+        }
+    }));
+}
+exports.runTask = runTask;
+exports.default = novelDiffFromLog;
