@@ -1,5 +1,17 @@
 import * as path from 'upath2';
 import * as cosmiconfig from 'cosmiconfig';
+import { IConfig, MODULE_NAME } from '../index';
+
+export function loadMainConfig(cwd?: string)
+{
+	return loadConfig<IConfig>(MODULE_NAME, {
+		searchPlaces: [
+			`${MODULE_NAME}.config.local.js`,
+			`${MODULE_NAME}.config.js`,
+		],
+		cwd,
+	});
+}
 
 export function transform(result)
 {

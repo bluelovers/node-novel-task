@@ -4,6 +4,7 @@
 import { IGitDiffFromRow } from 'git-diff-from';
 import loadConfig from './lib/config';
 import * as Promise from 'bluebird';
+export declare const MODULE_NAME = "node-novel-task";
 export declare function pathRelative(file: string): string;
 export declare type IListFileRow = IGitDiffFromRow & {
     pathMain: string;
@@ -56,7 +57,12 @@ export interface IConfig {
         main?(data: IListMainRow, name: string, temp?: ITemp): any;
         novel?(data: IListNovelRow, name: string, temp?: ITemp): any;
         file?(data: IListFileRow, file: string, temp?: ITemp): any;
+        before_end?(temp?: ITemp): any;
     };
+    debug?: {
+        no_push?: boolean;
+    };
+    nocache?: boolean;
 }
 export { loadConfig };
 export declare function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: ReturnType<typeof loadConfig> & {

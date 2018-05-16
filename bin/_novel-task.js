@@ -7,17 +7,10 @@ const index_1 = require("../index");
 const config_1 = require("../lib/config");
 const __1 = require("..");
 const FastGlob = require("fast-glob");
-exports.MODULE_NAME = 'node-novel-task';
 (async () => {
     let CWD = process.cwd();
     console.log(CWD);
-    const result = config_1.default(exports.MODULE_NAME, {
-        searchPlaces: [
-            `${exports.MODULE_NAME}.config.local.js`,
-            `${exports.MODULE_NAME}.config.js`,
-        ],
-        cwd: CWD,
-    });
+    const result = config_1.loadMainConfig(CWD);
     if (!result) {
         throw new Error(`無法找到 config`);
     }
@@ -33,7 +26,7 @@ exports.MODULE_NAME = 'node-novel-task';
         ],
     });
     let IS_INIT = false;
-    if (!cache) {
+    if (!cache || result.config.debug) {
         cache = {
             config: {
                 last: 10,
@@ -49,8 +42,9 @@ exports.MODULE_NAME = 'node-novel-task';
         novelRoot: result.config.cwd,
         baseHash: cache.config.last,
     });
-    if (IS_INIT) {
+    if (1 && IS_INIT) {
         console.warn(`本次為初始化任務，將執行全部檢查`);
+        //		console.log(result);
         await FastGlob([
             '**/*.md',
             '**/*.txt',
@@ -73,7 +67,7 @@ exports.MODULE_NAME = 'node-novel-task';
     else {
         console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
     }
-    if (1 && data.count.novel) {
+    if (!result.config.nocache && data.count.novel) {
         cache.config.last = data.range.to;
         fs.writeJSONSync(cache.filepath, cache.config, {
             spaces: 2,

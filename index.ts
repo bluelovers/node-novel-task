@@ -9,6 +9,8 @@ import * as fs from 'fs-extra';
 import loadConfig from './lib/config';
 import * as Promise from 'bluebird';
 
+export const MODULE_NAME = 'node-novel-task';
+
 export function pathRelative(file: string)
 {
 	let s = path.relative(process.cwd(), file);
@@ -189,7 +191,12 @@ export interface IConfig
 		main?(data: IListMainRow, name: string, temp?: ITemp);
 		novel?(data: IListNovelRow, name: string, temp?: ITemp);
 		file?(data: IListFileRow, file: string, temp?: ITemp);
+		before_end?(temp?: ITemp);
 	},
+	debug?: {
+		no_push?: boolean,
+	},
+	nocache?: boolean,
 }
 
 export { loadConfig }
@@ -221,6 +228,13 @@ export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: Retu
 			await setting.config.task.main(data.list[main] as IListMainRow, main, temp);
 		}
 	}))
+		.tap(async function ()
+		{
+			if (setting.config.task.before_end)
+			{
+				await setting.config.task.before_end(temp);
+			}
+		})
 		;
 }
 

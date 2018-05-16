@@ -8,6 +8,7 @@ const path = require("upath2");
 const config_1 = require("./lib/config");
 exports.loadConfig = config_1.default;
 const Promise = require("bluebird");
+exports.MODULE_NAME = 'node-novel-task';
 function pathRelative(file) {
     let s = path.relative(process.cwd(), file);
     return s;
@@ -123,7 +124,12 @@ function runTask(data, setting, temp = {}) {
         if (setting.config.task.main) {
             await setting.config.task.main(data.list[main], main, temp);
         }
-    }));
+    }))
+        .tap(async function () {
+        if (setting.config.task.before_end) {
+            await setting.config.task.before_end(temp);
+        }
+    });
 }
 exports.runTask = runTask;
 exports.default = novelDiffFromLog;
