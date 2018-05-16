@@ -1,3 +1,6 @@
+/**
+ * Created by user on 2018/5/15/015.
+ */
 import { IGitDiffFromRow } from 'git-diff-from';
 import loadConfig from './lib/config';
 import * as Promise from 'bluebird';
@@ -14,6 +17,16 @@ export declare type IListNovelRow = IListFileRow[] & {
 };
 export declare type IListMainRow = {
     [key: string]: IListNovelRow;
+};
+export declare function globToFakeList(list: string[]): {
+    list: {
+        [key: string]: IListMainRow;
+    };
+    count: {
+        main: number;
+        novel: number;
+        file: number;
+    };
 };
 export declare function novelDiffFromLog(options: {
     novelRoot: string;
@@ -34,15 +47,19 @@ export declare function novelDiffFromLog(options: {
         file: number;
     };
 };
+export interface ITemp {
+    init?: boolean;
+}
 export interface IConfig {
     cwd: string;
     task?: {
-        main?(data: IListMainRow, name: string): any;
-        novel?(data: IListNovelRow, name: string): any;
-        file?(data: IListFileRow, file: string): any;
+        main?(data: IListMainRow, name: string, temp?: ITemp): any;
+        novel?(data: IListNovelRow, name: string, temp?: ITemp): any;
+        file?(data: IListFileRow, file: string, temp?: ITemp): any;
     };
 }
+export { loadConfig };
 export declare function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: ReturnType<typeof loadConfig> & {
     config: IConfig;
-}): Promise<void[]>;
+}, temp?: ITemp): Promise<void[]>;
 export default novelDiffFromLog;

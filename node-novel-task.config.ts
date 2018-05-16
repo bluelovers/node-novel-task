@@ -12,7 +12,7 @@ if (fs.existsSync(path.join(process.cwd(), 'dist_novel')))
 {
 	cwd = path.join(process.cwd(), 'dist_novel');
 }
-else if (fs.existsSync(path.join(__dirname, 'dist_novel')))
+else if (0 && fs.existsSync(path.join(__dirname, 'dist_novel')))
 {
 	cwd = path.join(__dirname, 'dist_novel');
 }

@@ -32,6 +32,72 @@ export type IListMainRow = {
 	[key: string]: IListNovelRow,
 }
 
+export function globToFakeList(list: string[])
+{
+	let ret = {
+		list: {} as {
+			[key: string]: IListMainRow,
+		},
+		count: {
+			main: 0,
+			novel: 0,
+			file: 0,
+		},
+	};
+
+	ret.list = list.reduce(function (a, value)
+	{
+		let s = value.split(/[\\\/]/);
+
+		if (s.length > 3)
+		{
+			let pathMain = s[0];
+			let novelID = s[1];
+
+			let basename = s[s.length - 1];
+
+			let subpath = s.slice(2).join('/');
+
+			if (!a[pathMain])
+			{
+				ret.count.main++;
+			}
+
+			a[pathMain] = a[pathMain] || {};
+
+			if (!a[pathMain][novelID])
+			{
+				ret.count.novel++;
+			}
+
+			a[pathMain][novelID] = a[pathMain][novelID] || [];
+
+			Object.assign(a[pathMain][novelID], {
+				pathMain,
+				novelID,
+			});
+
+			a[pathMain][novelID].push(Object.assign({
+
+				path: value,
+
+				pathMain,
+				novelID,
+				basename,
+				subpath,
+			}));
+
+			ret.count.file++;
+		}
+
+		return a;
+	}, {});
+
+	console.log(ret.count);
+
+	return ret;
+}
+
 export function novelDiffFromLog(options: {
 	novelRoot: string,
 	baseHash?: number | string,
@@ -111,19 +177,26 @@ export function novelDiffFromLog(options: {
 	return ret;
 }
 
+export interface ITemp
+{
+	init?: boolean,
+}
+
 export interface IConfig
 {
 	cwd: string,
 	task?: {
-		main?(data: IListMainRow, name: string);
-		novel?(data: IListNovelRow, name: string);
-		file?(data: IListFileRow, file: string);
+		main?(data: IListMainRow, name: string, temp?: ITemp);
+		novel?(data: IListNovelRow, name: string, temp?: ITemp);
+		file?(data: IListFileRow, file: string, temp?: ITemp);
 	},
 }
 
+export { loadConfig }
+
 export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: ReturnType<typeof loadConfig> & {
 	config: IConfig,
-})
+}, temp: ITemp = {})
 {
 	return Promise.resolve(Promise.mapSeries(Object.keys(data.list), async function (main)
 	{
@@ -131,21 +204,21 @@ export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: Retu
 		{
 			if (setting.config.task.file)
 			{
-				await Promise.map(data.list[main][novel], async function (file)
+				await Promise.mapSeries(data.list[main][novel], async function (file)
 				{
-					return setting.config.task.file(file, file.fullpath);
+					return setting.config.task.file(file, file.fullpath, temp);
 				});
 			}
 
 			if (setting.config.task.novel)
 			{
-				await setting.config.task.novel(data.list[main][novel], novel);
+				await setting.config.task.novel(data.list[main][novel], novel, temp);
 			}
 		});
 
 		if (setting.config.task.main)
 		{
-			await setting.config.task.main(data.list[main] as IListMainRow, main);
+			await setting.config.task.main(data.list[main] as IListMainRow, main, temp);
 		}
 	}))
 		;
