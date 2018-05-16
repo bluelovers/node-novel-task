@@ -101,7 +101,7 @@ export const MODULE_NAME = 'node-novel-task';
 		console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
 	}
 
-	if (0 && data.count.novel)
+	if (1 && data.count.novel)
 	{
 		cache.config.last = data.range.to;
 
