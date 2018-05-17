@@ -18,13 +18,7 @@ const FastGlob = require("fast-glob");
     //	console.dir(result, {
     //		depth: 4,
     //	});
-    let cache = config_1.default('cache', {
-        cwd: path.resolve(CWD, './.cache'),
-        stopDir: path.resolve(CWD, './.cache'),
-        searchPlaces: [
-            `.cache.json`,
-        ],
-    });
+    let cache = config_1.loadCacheConfig(CWD);
     let IS_INIT = false;
     if (!cache || result.config.debug) {
         cache = {
@@ -58,6 +52,14 @@ const FastGlob = require("fast-glob");
             return Object.assign(data, ret);
         });
     }
+    if (!result.config.nocache && data.count.novel) {
+        cache.config.last = data.range.from;
+        cache.config.last_from = data.range.from;
+        cache.config.done = -1;
+        fs.writeJSONSync(cache.filepath, cache.config, {
+            spaces: 2,
+        });
+    }
     if (Object.keys(data.list).length) {
         console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
         await __1.runTask(data, result, {
@@ -69,6 +71,8 @@ const FastGlob = require("fast-glob");
     }
     if (!result.config.nocache && data.count.novel) {
         cache.config.last = data.range.to;
+        cache.config.last_from = data.range.from;
+        cache.config.done = 1;
         fs.writeJSONSync(cache.filepath, cache.config, {
             spaces: 2,
         });

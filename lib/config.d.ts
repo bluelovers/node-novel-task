@@ -3,6 +3,14 @@ export declare function loadMainConfig(cwd?: string): {
     config: IConfig;
     filepath: string;
 };
+export declare function loadCacheConfig(cwd?: string): {
+    config: {
+        last: string | number;
+        last_from?: string | number;
+        done?: number;
+    };
+    filepath: string;
+};
 export declare function transform(result: any): any;
 export declare function loadConfig<T>(name: string, options?: any): {
     config: T;

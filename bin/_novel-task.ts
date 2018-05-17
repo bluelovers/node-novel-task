@@ -3,7 +3,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'upath2';
 import { globToFakeList } from '../index';
-import loadConfig, { loadMainConfig } from '../lib/config';
+import loadConfig, { loadCacheConfig, loadMainConfig } from '../lib/config';
 import { pathRelative, novelDiffFromLog, IConfig, runTask, MODULE_NAME } from '..';
 import * as Promise from 'bluebird';
 import * as FastGlob from 'fast-glob';
@@ -26,15 +26,7 @@ import * as FastGlob from 'fast-glob';
 //		depth: 4,
 //	});
 
-	let cache = loadConfig<{
-		last: string | number,
-	}>('cache', {
-		cwd: path.resolve(CWD, './.cache'),
-		stopDir: path.resolve(CWD, './.cache'),
-		searchPlaces: [
-			`.cache.json`,
-		],
-	});
+	let cache = loadCacheConfig(CWD);
 
 	let IS_INIT = false;
 
@@ -82,6 +74,18 @@ import * as FastGlob from 'fast-glob';
 		;
 	}
 
+	if (!result.config.nocache && data.count.novel)
+	{
+		cache.config.last = data.range.from;
+		cache.config.last_from = data.range.from;
+
+		cache.config.done = -1;
+
+		fs.writeJSONSync(cache.filepath, cache.config, {
+			spaces: 2,
+		});
+	}
+
 	if (Object.keys(data.list).length)
 	{
 		console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
@@ -98,6 +102,9 @@ import * as FastGlob from 'fast-glob';
 	if (!result.config.nocache && data.count.novel)
 	{
 		cache.config.last = data.range.to;
+		cache.config.last_from = data.range.from;
+
+		cache.config.done = 1;
 
 		fs.writeJSONSync(cache.filepath, cache.config, {
 			spaces: 2,

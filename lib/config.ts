@@ -13,6 +13,21 @@ export function loadMainConfig(cwd?: string)
 	});
 }
 
+export function loadCacheConfig(cwd?: string)
+{
+	return loadConfig<{
+		last: string | number,
+		last_from?: string | number,
+		done?: number,
+	}>('cache', {
+		cwd: path.resolve(cwd, './.cache'),
+		stopDir: path.resolve(cwd, './.cache'),
+		searchPlaces: [
+			`.cache.json`,
+		],
+	});
+}
+
 export function transform(result)
 {
 	if (result)
