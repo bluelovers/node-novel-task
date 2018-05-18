@@ -1,3 +1,4 @@
+/// <reference types="bluebird" />
 /**
  * Created by user on 2018/5/15/015.
  */
@@ -54,10 +55,10 @@ export interface ITemp {
 export interface IConfig {
     cwd: string;
     task?: {
-        main?(data: IListMainRow, name: string, temp?: ITemp): any;
-        novel?(data: IListNovelRow, name: string, temp?: ITemp): any;
-        file?(data: IListFileRow, file: string, temp?: ITemp): any;
-        before_end?(temp?: ITemp): any;
+        main?(data: IListMainRow, name: string, temp?: ITemp);
+        novel?(data: IListNovelRow, name: string, temp?: ITemp);
+        file?(data: IListFileRow, file: string, temp?: ITemp);
+        before_end?(data: ReturnType<typeof novelDiffFromLog>, ls_map: any[], temp?: ITemp);
     };
     debug?: {
         no_push?: boolean;
@@ -67,5 +68,23 @@ export interface IConfig {
 export { loadConfig };
 export declare function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: ReturnType<typeof loadConfig> & {
     config: IConfig;
-}, temp?: ITemp): Promise<void[]>;
+}, temp?: ITemp): Promise<{
+    data: {
+        novelRoot: string;
+        baseHash: string | number;
+        list: {
+            [key: string]: IListMainRow;
+        };
+        range: {
+            from: string;
+            to: string;
+        };
+        count: {
+            main: number;
+            novel: number;
+            file: number;
+        };
+    };
+    ls_map: void[];
+}>;
 export default novelDiffFromLog;

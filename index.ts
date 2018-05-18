@@ -191,7 +191,7 @@ export interface IConfig
 		main?(data: IListMainRow, name: string, temp?: ITemp);
 		novel?(data: IListNovelRow, name: string, temp?: ITemp);
 		file?(data: IListFileRow, file: string, temp?: ITemp);
-		before_end?(temp?: ITemp);
+		before_end?(data: ReturnType<typeof novelDiffFromLog>, ls_map: any[], temp?: ITemp);
 	},
 	debug?: {
 		no_push?: boolean,
@@ -228,11 +228,15 @@ export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: Retu
 			await setting.config.task.main(data.list[main] as IListMainRow, main, temp);
 		}
 	}))
-		.tap(async function ()
+		.then(function (ls_map)
+		{
+			return { data, ls_map };
+		})
+		.tap(async function ({ data, ls_map })
 		{
 			if (setting.config.task.before_end)
 			{
-				await setting.config.task.before_end(temp);
+				await setting.config.task.before_end(data, ls_map, temp);
 			}
 		})
 		;

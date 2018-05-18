@@ -125,9 +125,12 @@ function runTask(data, setting, temp = {}) {
             await setting.config.task.main(data.list[main], main, temp);
         }
     }))
-        .tap(async function () {
+        .then(function (ls_map) {
+        return { data, ls_map };
+    })
+        .tap(async function ({ data, ls_map }) {
         if (setting.config.task.before_end) {
-            await setting.config.task.before_end(temp);
+            await setting.config.task.before_end(data, ls_map, temp);
         }
     });
 }
