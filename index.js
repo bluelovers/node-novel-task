@@ -58,7 +58,7 @@ function globToFakeList(list) {
 }
 exports.globToFakeList = globToFakeList;
 function novelDiffFromLog(options) {
-    let ls = git_diff_from_1.default(options.baseHash, {
+    let ls = git_diff_from_1.default(options.baseHash, 'origin/master', {
         cwd: options.novelRoot,
     });
     let ret = {

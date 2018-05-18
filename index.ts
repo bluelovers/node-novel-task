@@ -105,7 +105,7 @@ export function novelDiffFromLog(options: {
 	baseHash?: number | string,
 })
 {
-	let ls = gitDiffFrom(options.baseHash, {
+	let ls = gitDiffFrom(options.baseHash, 'origin/master', {
 		cwd: options.novelRoot,
 	});
 

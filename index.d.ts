@@ -1,4 +1,3 @@
-/// <reference types="bluebird" />
 /**
  * Created by user on 2018/5/15/015.
  */
@@ -55,10 +54,10 @@ export interface ITemp {
 export interface IConfig {
     cwd: string;
     task?: {
-        main?(data: IListMainRow, name: string, temp?: ITemp);
-        novel?(data: IListNovelRow, name: string, temp?: ITemp);
-        file?(data: IListFileRow, file: string, temp?: ITemp);
-        before_end?(data: ReturnType<typeof novelDiffFromLog>, ls_map: any[], temp?: ITemp);
+        main?(data: IListMainRow, name: string, temp?: ITemp): any;
+        novel?(data: IListNovelRow, name: string, temp?: ITemp): any;
+        file?(data: IListFileRow, file: string, temp?: ITemp): any;
+        before_end?(data: ReturnType<typeof novelDiffFromLog>, ls_map: any[], temp?: ITemp): any;
     };
     debug?: {
         no_push?: boolean;
