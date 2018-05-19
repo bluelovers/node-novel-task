@@ -134,7 +134,7 @@ export function novelDiffFromLog(options: {
 		{
 			let s = value.path.split(/[\\\/]/);
 
-			if (s.length > 3)
+			if (s.length > 2)
 			{
 				let pathMain = s[0];
 				let novelID = s[1];

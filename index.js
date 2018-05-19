@@ -78,7 +78,7 @@ function novelDiffFromLog(options) {
     if (ls.length) {
         ret.list = ls.reduce(function (a, value) {
             let s = value.path.split(/[\\\/]/);
-            if (s.length > 3) {
+            if (s.length > 2) {
                 let pathMain = s[0];
                 let novelID = s[1];
                 let basename = s[s.length - 1];
