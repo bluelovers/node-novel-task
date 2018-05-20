@@ -61,6 +61,8 @@ export interface IConfig {
     };
     debug?: {
         no_push?: boolean;
+        init?: boolean;
+        last?: string | number;
     };
     nocache?: boolean;
 }

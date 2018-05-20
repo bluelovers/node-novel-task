@@ -30,7 +30,7 @@ import * as FastGlob from 'fast-glob';
 
 	let IS_INIT = false;
 
-	if (!cache || result.config.debug)
+	if (!cache || result.config.debug && result.config.debug.init)
 	{
 		cache = {
 			config: {
@@ -40,6 +40,12 @@ import * as FastGlob from 'fast-glob';
 		};
 
 		IS_INIT = true;
+	}
+	else if (result.config.debug && result.config.debug.last)
+	{
+		cache.config.last = result.config.debug.last;
+
+		console.log('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
 	}
 	else
 	{

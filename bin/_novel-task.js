@@ -20,7 +20,7 @@ const FastGlob = require("fast-glob");
     //	});
     let cache = config_1.loadCacheConfig(CWD);
     let IS_INIT = false;
-    if (!cache || result.config.debug) {
+    if (!cache || result.config.debug && result.config.debug.init) {
         cache = {
             config: {
                 last: 10,
@@ -28,6 +28,10 @@ const FastGlob = require("fast-glob");
             filepath: path.resolve(CWD, './.cache', '.cache.json'),
         };
         IS_INIT = true;
+    }
+    else if (result.config.debug && result.config.debug.last) {
+        cache.config.last = result.config.debug.last;
+        console.log('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
     }
     else {
         console.log(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
