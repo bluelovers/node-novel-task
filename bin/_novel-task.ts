@@ -97,6 +97,10 @@ import * as FastGlob from 'fast-glob';
 	else
 	{
 		console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
+
+		await runTask(data, result, {
+			init: IS_INIT,
+		});
 	}
 
 	if (!result.config.nocache && data.count.novel)

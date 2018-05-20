@@ -68,6 +68,9 @@ const FastGlob = require("fast-glob");
     }
     else {
         console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
+        await __1.runTask(data, result, {
+            init: IS_INIT,
+        });
     }
     if (!result.config.nocache && data.count.novel) {
         cache.config.last = data.range.to;

@@ -110,7 +110,8 @@ function novelDiffFromLog(options) {
 }
 exports.novelDiffFromLog = novelDiffFromLog;
 function runTask(data, setting, temp = {}) {
-    return Promise.resolve(Promise.mapSeries(Object.keys(data.list), async function (main) {
+    return Promise.resolve(Promise
+        .mapSeries(Object.keys(data.list), async function (main) {
         await Promise.mapSeries(Object.keys(data.list[main]), async function (novel) {
             if (setting.config.task.file) {
                 await Promise.mapSeries(data.list[main][novel], async function (file) {

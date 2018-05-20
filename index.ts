@@ -205,29 +205,30 @@ export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: Retu
 	config: IConfig,
 }, temp: ITemp = {})
 {
-	return Promise.resolve(Promise.mapSeries(Object.keys(data.list), async function (main)
-	{
-		await Promise.mapSeries(Object.keys(data.list[main]), async function (novel)
+	return Promise.resolve(Promise
+		.mapSeries(Object.keys(data.list), async function (main)
 		{
-			if (setting.config.task.file)
+			await Promise.mapSeries(Object.keys(data.list[main]), async function (novel)
 			{
-				await Promise.mapSeries(data.list[main][novel], async function (file)
+				if (setting.config.task.file)
 				{
-					return setting.config.task.file(file, file.fullpath, temp);
-				});
-			}
+					await Promise.mapSeries(data.list[main][novel], async function (file)
+					{
+						return setting.config.task.file(file, file.fullpath, temp);
+					});
+				}
 
-			if (setting.config.task.novel)
+				if (setting.config.task.novel)
+				{
+					await setting.config.task.novel(data.list[main][novel], novel, temp);
+				}
+			});
+
+			if (setting.config.task.main)
 			{
-				await setting.config.task.novel(data.list[main][novel], novel, temp);
+				await setting.config.task.main(data.list[main] as IListMainRow, main, temp);
 			}
-		});
-
-		if (setting.config.task.main)
-		{
-			await setting.config.task.main(data.list[main] as IListMainRow, main, temp);
-		}
-	}))
+		}))
 		.then(function (ls_map)
 		{
 			return { data, ls_map };
