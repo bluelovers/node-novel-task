@@ -1,6 +1,6 @@
 {
   "name": "@node-novel/task",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "license": "ISC",
   "author": "",
   "main": "index.js",
@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "bluebird": "^3.5.1",
-    "cosmiconfig": "^5.0.3",
+    "cosmiconfig": "^5.0.5",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^6.0.1",
-    "git-diff-from": "^1.0.5",
+    "git-diff-from": "^1.1.0",
     "upath2": "^2.1.2",
     "yargs": "^11.0.0"
   },
