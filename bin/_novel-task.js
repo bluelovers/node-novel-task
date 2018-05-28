@@ -77,6 +77,7 @@ const FastGlob = require("fast-glob");
         });
     }
     if (!result.config.nocache && data.count.novel) {
+        console.log(data.range);
         cache.config.last = data.range.to;
         cache.config.last_from = data.range.from;
         cache.config.done = 1;

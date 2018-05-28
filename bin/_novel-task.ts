@@ -111,6 +111,8 @@ import * as FastGlob from 'fast-glob';
 
 	if (!result.config.nocache && data.count.novel)
 	{
+		console.log(data.range);
+
 		cache.config.last = data.range.to;
 		cache.config.last_from = data.range.from;
 
