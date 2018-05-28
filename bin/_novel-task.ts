@@ -95,19 +95,15 @@ import * as FastGlob from 'fast-glob';
 	if (Object.keys(data.list).length)
 	{
 		console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
-
-		await runTask(data, result, {
-			init: IS_INIT,
-		});
 	}
 	else
 	{
 		console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
-
-		await runTask(data, result, {
-			init: IS_INIT,
-		});
 	}
+
+	await runTask(data, result, {
+		init: IS_INIT,
+	});
 
 	if (!result.config.nocache && data.count.novel)
 	{

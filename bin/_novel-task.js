@@ -66,16 +66,13 @@ const FastGlob = require("fast-glob");
     }
     if (Object.keys(data.list).length) {
         console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
-        await __1.runTask(data, result, {
-            init: IS_INIT,
-        });
     }
     else {
         console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
-        await __1.runTask(data, result, {
-            init: IS_INIT,
-        });
     }
+    await __1.runTask(data, result, {
+        init: IS_INIT,
+    });
     if (!result.config.nocache && data.count.novel) {
         console.log(data.range);
         cache.config.last = data.range.to;
