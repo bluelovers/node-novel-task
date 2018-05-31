@@ -7,6 +7,7 @@ const index_1 = require("../index");
 const config_1 = require("../lib/config");
 const __1 = require("..");
 const FastGlob = require("fast-glob");
+const crossSpawn = require("cross-spawn");
 (async () => {
     let CWD = process.cwd();
     console.log(CWD);
@@ -36,6 +37,26 @@ const FastGlob = require("fast-glob");
     else {
         console.log(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
     }
+    if (cache.config.last_push_head) {
+        try {
+            let cp = crossSpawn.sync('git', [
+                'branch',
+                '--remotes',
+                'origin/master',
+                '--contains',
+                cache.config.last_push_head,
+            ], {
+                cwd: result.config.cwd,
+            }).stdout.toString().trim();
+            if (cp != 'origin/master') {
+                console.warn(`上次推送的分支 ${cache.config.last_push_head} 似乎未被合併`);
+                console.log(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
+                cache.config.last = cache.config.last_from;
+            }
+        }
+        catch (e) {
+        }
+    }
     let data = __1.novelDiffFromLog({
         novelRoot: result.config.cwd,
         baseHash: cache.config.last,
@@ -58,7 +79,7 @@ const FastGlob = require("fast-glob");
     }
     if (!result.config.nocache && data.count.novel) {
         cache.config.last = data.range.from;
-        cache.config.last_from = data.range.from;
+        //		cache.config.last_from = data.range.from;
         cache.config.done = -1;
         fs.writeJSONSync(cache.filepath, cache.config, {
             spaces: 2,

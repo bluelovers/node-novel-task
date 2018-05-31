@@ -8,6 +8,7 @@ export declare function loadCacheConfig(cwd?: string): {
         last: string | number;
         last_from?: string | number;
         done?: number;
+        last_push_head?: string;
     };
     filepath: string;
 };

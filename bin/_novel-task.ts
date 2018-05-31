@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs-extra';
+import gitlog from 'gitlog2';
 import * as path from 'upath2';
 import { globToFakeList } from '../index';
 import loadConfig, { loadCacheConfig, loadMainConfig } from '../lib/config';
 import { pathRelative, novelDiffFromLog, IConfig, runTask, MODULE_NAME } from '..';
 import * as Promise from 'bluebird';
 import * as FastGlob from 'fast-glob';
+import * as crossSpawn from 'cross-spawn';
 
 (async () =>
 {
@@ -52,6 +54,34 @@ import * as FastGlob from 'fast-glob';
 		console.log(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
 	}
 
+	if (cache.config.last_push_head)
+	{
+		try
+		{
+			let cp = crossSpawn.sync('git', [
+				'branch',
+				'--remotes',
+				'origin/master',
+				'--contains',
+				cache.config.last_push_head,
+			], {
+				cwd: result.config.cwd,
+			}).stdout.toString().trim();
+
+			if (cp != 'origin/master')
+			{
+				console.warn(`上次推送的分支 ${cache.config.last_push_head} 似乎未被合併`);
+				console.log(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
+
+				cache.config.last = cache.config.last_from;
+			}
+		}
+		catch (e)
+		{
+
+		}
+	}
+
 	let data = novelDiffFromLog({
 		novelRoot: result.config.cwd,
 		baseHash: cache.config.last,
@@ -83,7 +113,7 @@ import * as FastGlob from 'fast-glob';
 	if (!result.config.nocache && data.count.novel)
 	{
 		cache.config.last = data.range.from;
-		cache.config.last_from = data.range.from;
+//		cache.config.last_from = data.range.from;
 
 		cache.config.done = -1;
 
