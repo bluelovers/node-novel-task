@@ -99,6 +99,7 @@ const crossSpawn = require("cross-spawn");
         cache.config.last = data.range.to;
         cache.config.last_from = data.range.from;
         cache.config.done = 1;
+        console.dir(cache);
         fs.writeJSONSync(cache.filepath, cache.config, {
             spaces: 2,
         });

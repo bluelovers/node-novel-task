@@ -144,6 +144,8 @@ import * as crossSpawn from 'cross-spawn';
 
 		cache.config.done = 1;
 
+		console.dir(cache);
+
 		fs.writeJSONSync(cache.filepath, cache.config, {
 			spaces: 2,
 		});
