@@ -1,6 +1,6 @@
 {
   "name": "@node-novel/task",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "license": "ISC",
   "author": "",
   "main": "index.js",
@@ -11,6 +11,7 @@
     "bluebird": "^3.5.1",
     "cosmiconfig": "^5.0.5",
     "cross-spawn": "^6.0.5",
+    "debug-color2": "^1.0.6",
     "fs-extra": "^6.0.1",
     "git-diff-from": "^1.1.3",
     "gitlog2": "^4.1.0",

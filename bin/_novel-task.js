@@ -8,14 +8,15 @@ const config_1 = require("../lib/config");
 const __1 = require("..");
 const FastGlob = require("fast-glob");
 const crossSpawn = require("cross-spawn");
+const log_1 = require("../lib/log");
 (async () => {
     let CWD = process.cwd();
-    console.log(CWD);
+    log_1.default.log(CWD);
     const result = config_1.loadMainConfig(CWD);
     if (!result) {
         throw new Error(`無法找到 config`);
     }
-    console.log(`找到 config 位於 ${result.filepath}`);
+    log_1.default.log(`找到 config 位於 ${result.filepath}`);
     //	console.dir(result, {
     //		depth: 4,
     //	});
@@ -32,10 +33,10 @@ const crossSpawn = require("cross-spawn");
     }
     else if (result.config.debug && result.config.debug.last) {
         cache.config.last = result.config.debug.last;
-        console.log('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
+        log_1.default.debug('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
     }
     else {
-        console.log(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
+        log_1.default.debug(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
     }
     if (cache.config.last_push_head) {
         try {
@@ -49,8 +50,8 @@ const crossSpawn = require("cross-spawn");
                 cwd: result.config.cwd,
             }).stdout.toString().trim();
             if (cp != 'origin/master') {
-                console.warn(`上次推送的分支 ${cache.config.last_push_head} 似乎未被合併`);
-                console.log(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
+                log_1.default.warn(`上次推送的分支 ${cache.config.last_push_head} 似乎未被合併`);
+                log_1.default.yellow(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
                 cache.config.last = cache.config.last_from;
             }
         }
@@ -62,7 +63,7 @@ const crossSpawn = require("cross-spawn");
         baseHash: cache.config.last,
     });
     if (1 && IS_INIT) {
-        console.warn(`本次為初始化任務，將執行全部檢查`);
+        log_1.default.warn(`本次為初始化任務，將執行全部檢查`);
         //		console.log(result);
         await FastGlob([
             '**/*.md',
@@ -86,20 +87,20 @@ const crossSpawn = require("cross-spawn");
         });
     }
     if (Object.keys(data.list).length) {
-        console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
+        log_1.default.debug(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
     }
     else {
-        console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
+        log_1.default.warn(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
     }
     await __1.runTask(data, result, {
         init: IS_INIT,
     });
     if (!result.config.nocache && data.count.novel) {
-        console.log(data.range);
+        log_1.default.debug(data.range);
         cache.config.last = data.range.to;
         cache.config.last_from = data.range.from;
         cache.config.done = 1;
-        console.dir(cache);
+        log_1.default.dir(cache);
         fs.writeJSONSync(cache.filepath, cache.config, {
             spaces: 2,
         });

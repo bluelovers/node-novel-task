@@ -9,6 +9,7 @@ import { pathRelative, novelDiffFromLog, IConfig, runTask, MODULE_NAME } from '.
 import * as Promise from 'bluebird';
 import * as FastGlob from 'fast-glob';
 import * as crossSpawn from 'cross-spawn';
+import console from '../lib/log';
 
 (async () =>
 {
@@ -47,11 +48,11 @@ import * as crossSpawn from 'cross-spawn';
 	{
 		cache.config.last = result.config.debug.last;
 
-		console.log('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
+		console.debug('[DEBUG]', `由上次紀錄 ${cache.config.last} 之後 開始檢查`);
 	}
 	else
 	{
-		console.log(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
+		console.debug(`由上次紀錄 ${cache.config.last} 之後 開始檢查`);
 	}
 
 	if (cache.config.last_push_head)
@@ -71,7 +72,7 @@ import * as crossSpawn from 'cross-spawn';
 			if (cp != 'origin/master')
 			{
 				console.warn(`上次推送的分支 ${cache.config.last_push_head} 似乎未被合併`);
-				console.log(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
+				console.yellow(`本次將重新由上次起始點 ${cache.config.last_from} 開始`);
 
 				cache.config.last = cache.config.last_from;
 			}
@@ -124,11 +125,11 @@ import * as crossSpawn from 'cross-spawn';
 
 	if (Object.keys(data.list).length)
 	{
-		console.log(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
+		console.debug(`在上次的更新 ${data.range.from} 之後 有 ${data.count.novel} 小說 ${data.count.file} 檔案產生變動`);
 	}
 	else
 	{
-		console.log(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
+		console.warn(`在上次的更新 ${data.range.from} 之後 沒有新的變化`);
 	}
 
 	await runTask(data, result, {
@@ -137,7 +138,7 @@ import * as crossSpawn from 'cross-spawn';
 
 	if (!result.config.nocache && data.count.novel)
 	{
-		console.log(data.range);
+		console.debug(data.range);
 
 		cache.config.last = data.range.to;
 		cache.config.last_from = data.range.from;
