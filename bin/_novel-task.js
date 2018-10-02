@@ -16,7 +16,7 @@ const log_1 = require("../lib/log");
     if (!result) {
         throw new Error(`無法找到 config`);
     }
-    log_1.default.log(`找到 config 位於 ${result.filepath}`);
+    log_1.default.info(`找到 config 位於 ${result.filepath}`);
     //	console.dir(result, {
     //		depth: 4,
     //	});
@@ -30,6 +30,7 @@ const log_1 = require("../lib/log");
             filepath: path.resolve(CWD, './.cache', '.cache.json'),
         };
         IS_INIT = true;
+        log_1.default.warn(`本次為初始化任務，將分析最近 ${cache.config.last} 次紀錄`);
     }
     else if (result.config.debug && result.config.debug.last) {
         cache.config.last = result.config.debug.last;
@@ -62,8 +63,8 @@ const log_1 = require("../lib/log");
         novelRoot: result.config.cwd,
         baseHash: cache.config.last,
     });
-    if (1 && IS_INIT) {
-        log_1.default.warn(`本次為初始化任務，將執行全部檢查`);
+    if (1 && IS_INIT && !result.config.disableInit) {
+        log_1.default.warn(`本次為初始化任務，將執行全部任務`);
         //		console.log(result);
         await FastGlob([
             '**/*.md',

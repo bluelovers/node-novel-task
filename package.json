@@ -1,9 +1,16 @@
 {
   "name": "@node-novel/task",
-  "version": "1.0.19",
+  "version": "1.0.21",
+  "description": "",
   "license": "ISC",
   "author": "",
   "main": "index.js",
+  "bin": {
+    "_novel-task": "./bin/_novel-task.js"
+  },
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,15 +25,8 @@
     "upath2": "^2.1.2",
     "yargs": "^11.0.0"
   },
+  "devDependencies": {},
   "publishConfig": {
     "access": "public"
-  },
-  "directories": {
-    "lib": "lib"
-  },
-  "devDependencies": {},
-  "bin": {
-    "_novel-task": "./bin/_novel-task.js"
-  },
-  "description": ""
+  }
 }

@@ -38,4 +38,12 @@ __tests__
 /node-novel-task.config.local.*
 /node-novel-task.config.local.ts
 /node-novel-task.config.local.js
+*.local.*
 
+### jsonly template
+*.ts
+!*.d.ts
+### jsonly_bin template
+bin/*.ts
+bin/*.d.ts
+/node-novel-task.config.local.d.ts

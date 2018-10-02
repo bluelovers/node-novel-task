@@ -24,7 +24,7 @@ import console from '../lib/log';
 		throw new Error(`無法找到 config`)
 	}
 
-	console.log(`找到 config 位於 ${result.filepath}`);
+	console.info(`找到 config 位於 ${result.filepath}`);
 //	console.dir(result, {
 //		depth: 4,
 //	});
@@ -43,6 +43,8 @@ import console from '../lib/log';
 		};
 
 		IS_INIT = true;
+
+		console.warn(`本次為初始化任務，將分析最近 ${cache.config.last} 次紀錄`);
 	}
 	else if (result.config.debug && result.config.debug.last)
 	{
@@ -88,9 +90,9 @@ import console from '../lib/log';
 		baseHash: cache.config.last,
 	});
 
-	if (1 && IS_INIT)
+	if (1 && IS_INIT && !result.config.disableInit)
 	{
-		console.warn(`本次為初始化任務，將執行全部檢查`);
+		console.warn(`本次為初始化任務，將執行全部任務`);
 
 //		console.log(result);
 

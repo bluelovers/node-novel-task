@@ -65,6 +65,7 @@ export interface IConfig {
         last?: string | number;
     };
     nocache?: boolean;
+    disableInit?: boolean;
 }
 export { loadConfig };
 export declare function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: ReturnType<typeof loadConfig> & {

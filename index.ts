@@ -199,6 +199,7 @@ export interface IConfig
 		last?: string | number,
 	},
 	nocache?: boolean,
+	disableInit?: boolean,
 }
 
 export { loadConfig }
