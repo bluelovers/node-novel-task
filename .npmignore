@@ -6,6 +6,10 @@
 ~ci.log.txt
 ~ci.errors.txt
 
+### jsonly template
+*.ts
+!*.d.ts
+
 *.stackdump
 *.bak
 *.old
@@ -33,6 +37,8 @@ tests
 __test__
 __tests__
 
+
+
 /node_modules/
 **/node_modules/
 /node-novel-task.config.local.*
@@ -40,9 +46,7 @@ __tests__
 /node-novel-task.config.local.js
 *.local.*
 
-### jsonly template
-*.ts
-!*.d.ts
+
 ### jsonly_bin template
 bin/*.ts
 bin/*.d.ts
