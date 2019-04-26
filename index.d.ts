@@ -3,7 +3,7 @@
  */
 import { IGitDiffFromRow } from 'git-diff-from';
 import loadConfig from './lib/config';
-import * as Promise from 'bluebird';
+import Promise = require('bluebird');
 export declare const MODULE_NAME = "node-novel-task";
 export declare function pathRelative(file: string): string;
 export declare type IListFileRow = IGitDiffFromRow & {

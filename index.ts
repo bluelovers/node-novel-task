@@ -3,11 +3,11 @@
  */
 
 import gitDiffFrom, { IGitDiffFromRow } from 'git-diff-from';
-import * as cosmiconfig from 'cosmiconfig';
-import * as path from 'upath2';
-import * as fs from 'fs-extra';
+import cosmiconfig = require('cosmiconfig');
+import path = require('upath2');
+import fs = require('fs-extra');
 import loadConfig from './lib/config';
-import * as Promise from 'bluebird';
+import Promise = require('bluebird');
 
 export const MODULE_NAME = 'node-novel-task';
 
