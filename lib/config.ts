@@ -1,6 +1,7 @@
 import * as path from 'upath2';
 import * as cosmiconfig from 'cosmiconfig';
 import { IConfig, MODULE_NAME } from '../index';
+import * as fs from 'fs-extra';
 
 export function loadMainConfig(cwd?: string)
 {
@@ -15,6 +16,10 @@ export function loadMainConfig(cwd?: string)
 
 export function loadCacheConfig(cwd?: string)
 {
+	let bool = fs.existsSync(path.resolve(cwd, './.cache'));
+
+	console.log(`loadCacheConfig`, `exists:${bool}`);
+
 	return loadConfig<{
 		last: string | number,
 		last_from?: string | number,
