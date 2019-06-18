@@ -18,6 +18,7 @@ export function loadCacheConfig(cwd?: string)
 {
 	let bool = fs.existsSync(path.resolve(cwd, './.cache'));
 
+	console.log(`cwd`, cwd);
 	console.log(`loadCacheConfig`, `exists:${bool}`);
 
 	return loadConfig<{
