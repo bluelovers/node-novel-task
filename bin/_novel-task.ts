@@ -15,7 +15,7 @@ import console from '../lib/log';
 {
 	let CWD = process.cwd();
 
-	console.log(CWD);
+	console.log(`CWD`, CWD);
 
 	const result = loadMainConfig(CWD);
 
@@ -32,6 +32,8 @@ import console from '../lib/log';
 	let cache = loadCacheConfig(CWD);
 
 	let IS_INIT = false;
+
+	console.dir(cache);
 
 	if (!cache || result.config.debug && result.config.debug.init)
 	{
