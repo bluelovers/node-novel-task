@@ -3,17 +3,16 @@
  */
 
 import gitDiffFrom, { IGitDiffFromRow } from 'git-diff-from';
-import cosmiconfig = require('cosmiconfig');
-import path = require('upath2');
-import fs = require('fs-extra');
+import path, { relative } from 'upath2';
 import loadConfig from './lib/config';
-import Promise = require('bluebird');
+import Bluebird from 'bluebird';
+import console from 'debug-color2';
 
 export const MODULE_NAME = 'node-novel-task';
 
 export function pathRelative(file: string)
 {
-	let s = path.relative(process.cwd(), file);
+	let s = relative(process.cwd(), file);
 
 	return s;
 }
@@ -208,14 +207,14 @@ export function runTask(data: ReturnType<typeof novelDiffFromLog>, setting: Retu
 	config: IConfig,
 }, temp: ITemp = {})
 {
-	return Promise.resolve(Promise
+	return Bluebird.resolve(Bluebird
 		.mapSeries(Object.keys(data.list), async function (main)
 		{
-			await Promise.mapSeries(Object.keys(data.list[main]), async function (novel)
+			await Bluebird.mapSeries(Object.keys(data.list[main]), async function (novel)
 			{
 				if (setting.config.task.file)
 				{
-					await Promise.mapSeries(data.list[main][novel], async function (file)
+					await Bluebird.mapSeries(data.list[main][novel], async function (file)
 					{
 						return setting.config.task.file(file, file.fullpath, temp);
 					});

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import * as fs from 'fs-extra';
+import fs, { writeJSONSync } from 'fs-extra';
 import gitlog from 'gitlog2';
-import * as path from 'upath2';
+import path from 'upath2';
 import { globToFakeList } from '../index';
 import loadConfig, { loadCacheConfig, loadMainConfig } from '../lib/config';
 import { pathRelative, novelDiffFromLog, IConfig, runTask, MODULE_NAME } from '..';
-import * as Promise from 'bluebird';
-import * as FastGlob from 'fast-glob';
-import * as crossSpawn from 'cross-spawn';
+import Bluebird from 'bluebird';
+import FastGlob from '@bluelovers/fast-glob';
+import crossSpawn from 'cross-spawn-extra';
 import console from '../lib/log';
 
 (async () =>
@@ -35,7 +35,7 @@ import console from '../lib/log';
 
 	console.dir(cache);
 
-	if (!cache || result.config.debug && result.config.debug.init)
+	if (!cache || result.config?.debug?.init)
 	{
 		cache = {
 			config: {
@@ -48,7 +48,7 @@ import console from '../lib/log';
 
 		console.warn(`本次為初始化任務，將分析最近 ${cache.config.last} 次紀錄`);
 	}
-	else if (result.config.debug && result.config.debug.last)
+	else if (result.config.debug?.last)
 	{
 		cache.config.last = result.config.debug.last;
 
@@ -122,7 +122,7 @@ import console from '../lib/log';
 
 		cache.config.done = -1;
 
-		fs.writeJSONSync(cache.filepath, cache.config, {
+		writeJSONSync(cache.filepath, cache.config, {
 			spaces: 2,
 		});
 	}
@@ -151,7 +151,7 @@ import console from '../lib/log';
 
 		console.dir(cache);
 
-		fs.writeJSONSync(cache.filepath, cache.config, {
+		writeJSONSync(cache.filepath, cache.config, {
 			spaces: 2,
 		});
 	}

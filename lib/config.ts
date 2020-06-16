@@ -1,7 +1,10 @@
-import * as path from 'upath2';
-import * as cosmiconfig from 'cosmiconfig';
+import path from 'upath2';
+import { cosmiconfig, cosmiconfigSync } from 'cosmiconfig';
 import { IConfig, MODULE_NAME } from '../index';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
+import { existsSync } from 'fs';
+import { resolve } from 'upath2';
+import console from 'debug-color2';
 
 export function loadMainConfig(cwd?: string)
 {
@@ -16,10 +19,13 @@ export function loadMainConfig(cwd?: string)
 
 export function loadCacheConfig(cwd?: string)
 {
-	let bool = fs.existsSync(path.resolve(cwd, './.cache'));
+	let bool = existsSync(resolve(cwd, './.cache'));
 
 	console.log(`cwd`, cwd);
-	console.log(`loadCacheConfig`, `exists:${bool}`);
+
+	let bool2 = existsSync(resolve(cwd, './.cache/.cache.json'));
+
+	console.log(`loadCacheConfig`, `cwd exists:${bool}`, `file exists:${bool2}`);
 
 	return loadConfig<{
 		last: string | number,
@@ -29,8 +35,8 @@ export function loadCacheConfig(cwd?: string)
 		last_push_head?: string,
 
 	}>('cache', {
-		cwd: path.resolve(cwd, './.cache'),
-		stopDir: path.resolve(cwd, './.cache'),
+		cwd: resolve(cwd, './.cache'),
+		stopDir: resolve(cwd, './.cache'),
 		searchPlaces: [
 			`.cache.json`,
 		],
@@ -41,7 +47,7 @@ export function transform(result)
 {
 	if (result)
 	{
-		result.filepath = path.resolve(result.filepath);
+		result.filepath = resolve(result.filepath);
 
 		if (result.config && result.config.default && Object.keys(result.config).length == 1)
 		{
@@ -55,13 +61,14 @@ export function transform(result)
 export function loadConfig<T>(name: string, options?): {
 	config: T,
 	filepath: string,
+	isEmpty?: boolean,
 }
 {
 	options = Object.assign({
 		transform,
 	}, options);
 
-	let result = cosmiconfig(name, options).searchSync(options.cwd);
+	let result = cosmiconfigSync(name, options).search(options.cwd);
 
 	return result;
 }

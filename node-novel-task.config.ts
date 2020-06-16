@@ -3,18 +3,19 @@
  */
 
 import { IListFileRow, IListMainRow, IListNovelRow } from './';
-import fs = require('fs-extra');
-import path = require('path');
+import fs, { existsSync } from 'fs-extra';
+import path, { join } from 'upath2';
+import console from 'debug-color2';
 
 let cwd: string;
 
-if (fs.existsSync(path.join(process.cwd(), 'dist_novel')))
+if (existsSync(join(process.cwd(), 'dist_novel')))
 {
-	cwd = path.join(process.cwd(), 'dist_novel');
+	cwd = join(process.cwd(), 'dist_novel');
 }
-else if (0 && fs.existsSync(path.join(__dirname, 'dist_novel')))
+else if (0 && existsSync(join(__dirname, 'dist_novel')))
 {
-	cwd = path.join(__dirname, 'dist_novel');
+	cwd = join(__dirname, 'dist_novel');
 }
 else
 {
